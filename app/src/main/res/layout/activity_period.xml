@@ -58,6 +58,30 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6"
+            android:orientation="vertical">
+
+            <ScrollView
+                android:id="@+id/sv_lap"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/et_laps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:allowUndo="false"
+                    android:textColor="#ff0000"/>
+
+            </ScrollView>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:orientation="horizontal"
@@ -69,6 +93,13 @@
                 android:layout_height="64dp"
                 android:background="@drawable/icon_start"
                 android:backgroundTint="@color/colorPrimary"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnLap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:text="Lap"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btnStop"

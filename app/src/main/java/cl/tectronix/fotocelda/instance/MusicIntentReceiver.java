@@ -1,12 +1,10 @@
-package cl.tectronix.fotocelda.utilities;
+package cl.tectronix.fotocelda.instance;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import java.util.Objects;
-
-import cl.tectronix.fotocelda.utilities.Utilities;
 
 public class MusicIntentReceiver extends BroadcastReceiver {
 

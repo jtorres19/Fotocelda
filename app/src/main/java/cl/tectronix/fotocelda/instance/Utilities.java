@@ -1,4 +1,4 @@
-package cl.tectronix.fotocelda.utilities;
+package cl.tectronix.fotocelda.instance;
 
 import android.content.Context;
 import android.widget.Toast;

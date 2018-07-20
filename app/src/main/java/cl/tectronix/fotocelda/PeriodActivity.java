@@ -1,92 +1,141 @@
 package cl.tectronix.fotocelda;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ScrollView;
 
-public class PeriodActivity extends AppCompatActivity {
+import cl.tectronix.fotocelda.thread.TuneThread;
 
-    private final int duration = 3; // seconds
-    private final int sampleRate = 8000;
-    private final int numSamples = duration * sampleRate;
-    private final double sample[] = new double[numSamples];
-    private final double freqOfTone = 1000; // hz
+public class PeriodActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private final byte generatedSnd[] = new byte[2 * numSamples];
+    private boolean isOn = false;
+    private int mili = 0, minute = 0, sec = 0;
+    private Handler handler = new Handler();
+    private TuneThread tuneThread;
+    private AppCompatTextView lblTimer;
+    private AppCompatButton btnStart,btnStop,btnLap;
+    private EditText mEtLaps; //laps text view
+    private ScrollView mSvLaps; //scroll view which wraps the et_laps
 
-    //Member variables to access UI Elements
-    AppCompatButton btnStart, mBtnLap, btnStop; //buttons
-    AppCompatTextView lblTimer; //timer textview
+    //keep track of how many times btn_lap was clicked
+    int mLapCounter = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_period);
 
-        //Instantiating all member variables
+        mEtLaps = findViewById(R.id.et_laps);
+        mEtLaps.setEnabled(false); //prevent the et_laps to be editable
+
+        mSvLaps = findViewById(R.id.sv_lap);
+
         btnStart = findViewById(R.id.btnStart);
-        //mBtnLap = findViewById(R.id.btLnap);
         btnStop = findViewById(R.id.btnStop);
+        btnLap = findViewById(R.id.btnLap);
 
         lblTimer = findViewById(R.id.lblTimer);
 
-        btnStart.setOnClickListener(new View.OnClickListener() {
+        btnStart.setOnClickListener(this);
+        btnStop.setOnClickListener(this);
+        btnLap.setOnClickListener(this);
+
+        tuneThread = new TuneThread();
+
+        Thread chrono = new Thread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                genTone();
-                playSound();
+            public void run() {
+                while (true) {
+                    if (isOn) {
+                        try {
+                            Thread.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        mili++;
+                        if (mili == 999) {
+                            sec++;
+                            mili = 0;
+                        }
+                        if (sec == 59) {
+                            minute++;
+                            sec = 0;
+                        }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String m, s, mi;
+                                if (mili < 10) {
+                                    m = "00" + mili;
+                                } else if (mili < 100) {
+                                    m = "0" + mili;
+                                } else {
+                                    m = "" + mili;
+                                }
+                                if (sec < 10) {
+                                    s = "0" + sec;
+                                } else {
+                                    s = "" + sec;
+                                }
+                                if (minute < 10) {
+                                    mi = "0" + minute;
+                                } else {
+                                    mi = "" + minute;
+                                }
+
+                                lblTimer.setText(mi + ":" + s + ":" + m);
+                            }
+                        });
+                    }
+                }
             }
         });
 
-        btnStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        chrono.start();
 
-            }
-        });
-
-        /*mBtnLap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });*/
     }
 
-    void genTone(){
-        // fill out the array
-        for (int i = 0; i < numSamples; ++i) {
-            sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btnStart:
+                isOn = true;
+                tuneThread.start();
+                btnStart.setEnabled(false);
+                btnLap.setEnabled(true);
+                break;
+            case R.id.btnStop:
+                isOn = false;
+                tuneThread.stopTune();
+                btnStart.setEnabled(true);
+                btnLap.setEnabled(false);
+                break;
+            case R.id.btnLap:
+                mEtLaps.append("LAP " + String.valueOf(mLapCounter++)
+                        + "   " + lblTimer.getText() + "\n");
+
+                //scroll to the bottom of et_laps
+                mSvLaps.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSvLaps.smoothScrollTo(0, mEtLaps.getBottom());
+                    }
+                });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (tuneThread != null){
+            tuneThread.stopTune();
         }
 
-        // convert to 16 bit pcm sound array
-        // assumes the sample buffer is normalised.
-        int idx = 0;
-        for (final double dVal : sample) {
-            // scale to maximum amplitude
-            final short val = (short) ((dVal * 32767));
-            // in 16 bit wav PCM, first byte is the low order byte
-            generatedSnd[idx++] = (byte) (val & 0x00ff);
-            generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
-
-        }
+        super.onBackPressed();
     }
 
-    void playSound(){
-        final AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO,
-                AudioFormat.ENCODING_PCM_16BIT, numSamples,
-                AudioTrack.MODE_STATIC);
-        audioTrack.write(generatedSnd, 0, generatedSnd.length);
-        audioTrack.play();
-    }
 }
