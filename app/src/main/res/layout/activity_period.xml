@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PeriodActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:background="@drawable/icon_door"
+            android:layout_marginTop="40dp"/>
+
+        <RelativeLayout
+            android:id="@+id/layoutTotal2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/lblT4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:text="@string/lblT"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/lblTime4"
+                android:layout_width="100dp"
+                android:layout_height="44dp"
+                android:layout_toEndOf="@+id/lblT4"
+                android:textAlignment="center"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_toEndOf="@+id/lblTime4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:text="@string/lblS"/>
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/lblTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/lblTime"
+            android:textSize="24sp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnStart"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/icon_start"
+                android:backgroundTint="@color/colorPrimary"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnStop"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="40dp"
+                android:background="@drawable/icon_stop"
+                android:backgroundTint="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">OCTOPUS STEM</string>
+    <string name="modeTime">Modo Tiempo</string>
+    <string name="modePeriod">Modo Período</string>
+    <string name="lblT">T = </string>
+    <string name="lblS">S</string>
+    <string name="btnTextStart">Iniciar</string>
+    <string name="btnTextStop">Detener</string>
+    <string name="lblTime">00:00:0000</string>
+</resources>
